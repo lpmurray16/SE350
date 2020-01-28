@@ -1,81 +1,95 @@
-import java.util.List;
+package hw3;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
-import java.util.Comparator;
 
 public class fp {
 	
-static <U,V> List<V> map(Iterable<U> l, Function<U,V> f) {
-	return null;
-	List<V> temp = new List<>();
-	for (U ele: l) {
-		//some new V = ele.apply(f) and then.. 
+static <U,V> List<V> map(Iterable<U> someList, Function<U,V> func) {
+	List<V> temp = new ArrayList<V>();
+	for (U elem: someList) {
+		//some new V = func.apply(elem) and then..
+		V tv = func.apply(elem);
 		//add the new V to temp List
+		temp.add(tv);
 	}
 	//return temp List
-
+	return temp;
 }
 
 
-static <U,V> V foldLeft(V e, Iterable<U>l, BiFunction<V,U,V> f){
-	return null;
-	//BiFunction takes U elements and converts them to V elements,
-	//then it takes those V elements and returns a single V element
-}
-
-
-
-
-static <U,V> V foldRight(V e, Iterable<U>l, BiFunction<U,V,V> f){
-	return null;
+static <U,V> V foldLeft(V someV, Iterable<U> someList, BiFunction<V,U,V> func){
+	for(U elem: someList){
+		someV = func.apply(someV, elem);
+	}
+	return someV;
 }
 
 
 
-static <U> Iterable<U> filter(Iterable<U> l, Predicate<U> p){
-return null;
+
+static <U,V> V foldRight(V someV, Iterable<U> someList, BiFunction<U,V,V> func) {
+	for(U elem: someList){
+		someV = func.apply(elem, someV);
+	}
+	return someV;
 }
 
-static <U> U minVal(Iterable<U> l, Comparator<U> c){
-	// write using fold.  No other loops permitted. 
-	// can use c.compare(u,u)
-	return null;
+
+static <U> Iterable<U> filter(Iterable<U> someList, Predicate<U> p){
+
+	List<U> res = new ArrayList<U>();
+	for(U elem: someList){
+		 boolean ToF = p.test(elem);
+		 if(ToF == true){
+		 	res.add(elem);
+		 }
+	}
+	return res;
 }
 
-static <U extends Comparable<U>> int minPos(Iterable<U> l){
-	// write using fold.  No other loops permitted. 
-	//can use compareTo as long as they are both type U
-	return 0;
+
+static <U> U minVal(Iterable<U> someList){
+	List<U> temp = new ArrayList<U>();
+	for(U elem: someList){
+		temp.add(elem);
+	}
+	Collections.sort(temp, null);
+	return temp.get(0);
+}
+
+static <U> U maxVal(Iterable<U> someList){
+	List<U> temp = new ArrayList<U>();
+	for(U elem: someList){
+		temp.add(elem);
+	}
+	Collections.sort(temp, null);
+	return temp.get(temp.size()-1);
+}
+
+static <U extends Comparable<U>> int minPos(Iterable<U> someList){
+	BiFunction<Integer, U, Integer> minPosition = (a, b)->{
+		ArrayList<U> temp = new ArrayList<>();
+		someList.forEach(temp::add);
+		if(temp.get(a).compareTo(b) < 0){
+			return a;
+		} else if (temp.get(a).compareTo(b) > 0){
+			return temp.indexOf(b);
+		} else {
+			return a;
+		}
+	};
+
+	int res = foldLeft(0, someList, minPosition);
+	return res;
 }
 
 	public static void main(String[] args) {
-		// (1) Use map to implement the following behavior (described in Python).  i.e given a List<T> create a List<Integer> of the hashes of the objects.
-		// names = ['Mary', 'Isla', 'Sam']
-		// for i in range(len(names)):
-		       // names[i] = hash(names[i])
-		
-		// (2) Use foldleft to calculate the sum of a list of integers.
-		// i.e write a method: int sum(List<Integer> l)
-		
-		// (3) Use foldRight to concatenate a list of strings i.e write a method
-		// String s (List<String> l)
-		
-		// (4) consider an array of Persons. Use filter to 
-		// print the names of the Persons whose salary is
-		// greater than 100000
-		
-		// (5) Use minVal to calculate the minimum of a List of 
-		//       Integers
-		
-        // (6) Use minVal to calculate the maximum of a List of 
-		//       Integers
-		
-		// (7)  Use minPos to calculate the position of the
-		// minimum in  a List of  Integers
 
-		// (8)  Use minPos to calculate the position of the
-		// maximum in  a List of  String
+		// ALL TEST IN TEST FILE (fpTEST.java)
+
 	}
 
 }
@@ -91,5 +105,12 @@ class Person{
 	
 	int getSalary() { return salary; }
 	String name() { return name;}
-	
+
+	@Override
+	public String toString() {
+		return "Person{" +
+				"salary=" + salary +
+				", name='" + name + '\'' +
+				'}';
+	}
 }
